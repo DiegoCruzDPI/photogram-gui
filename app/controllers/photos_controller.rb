@@ -51,4 +51,50 @@ class PhotosController <ApplicationController
     # render({ :template => "photo_templates/create.html.erb"})
     redirect_to("/photos/" + a_new_photo.id.to_s)
   end
+
+  def update
+    #we have to call the keys that were rendered in out server so that we can manipulate the vaules of what is displayed to the user
+    #Parameters: {"query_image"=>"data:image/png;base64", "query_caption"=>" asdfasdf", "modify_id"=>"953"}
+    
+    the_id = params.fetch("modify_id")
+
+    matching_photos = Photo.where({ :id => the_id})
+
+    the_photo = matching_photos.at(0)
+
+    input_image = params.fetch("query_image")
+    input_caption = params.fetch("query_caption")
+
+    the_photo.image = input_image
+    the_photo.caption = input_caption
+
+    the_photo.save
+
+    #render( :template => "photo_templates/update.html.erb")
+    next_url = "/photos/" + the_photo.id.to_s
+    redirect_to(next_url)
+  end
+
+  def comment_create
+    the_photo_id = params.fetch("modify_comments")
+    the_author_id = params.fetch("query_author_id")
+    the_comment = params.fetch("query_comment")
+
+    a_comment = Comment.new
+
+    a_comment.photo_id = the_photo_id
+
+    a_comment.author_id = the_author_id
+
+    a_comment.body = the_comment
+
+    a_comment.save
+
+
+
+    
+    # render( :template => "photo_templates/comment.html.erb")
+    redirect_to("/photos/" + the_photo_id.to_s)
+
+  end
 end
